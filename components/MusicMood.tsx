@@ -14,7 +14,8 @@ function MusicMood({ mood }: { mood: string }) {
     <View
       style={{
         boxShadow:
-          'inset 0 -3em 3em rgb(0 0 0), 0 0 0 1px purple, 0.3em 0.3em 0.3em rgb(200 0 0)',
+          'inset 0 -3em 3em rgb(0 0 0), 0 0 0 2px purple, 0.2em 0.2em 0.2em rgb(200 0 0)',
+        borderRadius: 20,
       }}
     >
       <Button

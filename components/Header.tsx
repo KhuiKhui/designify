@@ -1,7 +1,13 @@
 import { Text, View, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { ThemedText } from './themed-text';
+import { usePolling } from '@/store/usePolling';
 function Header() {
+  const setCurrentQuestion = usePolling(
+    (state: any) => state.setCurrentQuestion,
+  );
+  const resetMoodScore = usePolling((state: any) => state.resetMoodScore);
+
   return (
     <View style={styles.container}>
       <View>
@@ -15,7 +21,13 @@ function Header() {
           Design your day - Design your mood
         </Text>
       </View>
-      <Link href="/polling">
+      <Link
+        onPress={() => {
+          resetMoodScore();
+          setCurrentQuestion(1);
+        }}
+        href="/polling"
+      >
         <ThemedText
           style={{
             fontSize: 12,
@@ -25,7 +37,7 @@ function Header() {
           }}
           type="subtitle"
         >
-          Daily polling!
+          User polling!
         </ThemedText>
       </Link>
     </View>

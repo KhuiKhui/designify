@@ -1,8 +1,10 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
-import MusicMood from './MusicMood';
-import { usePolling } from '@/store/usePolling';
+import { View, Text, StyleSheet } from 'react-native';
 import '@expo/match-media';
 import { useMediaQuery } from 'react-responsive';
+import MusicList from './MusicList';
+import { Link } from 'expo-router';
+import { ThemedText } from './themed-text';
+import { usePolling } from '@/store/usePolling';
 
 function MusicPlayer() {
   const completed = usePolling((state: any) => state.completed);
@@ -12,17 +14,25 @@ function MusicPlayer() {
     maxDeviceWidth: 1224,
   });
 
-  function moodAssessment(score: number) {
+  const setCurrentQuestion = usePolling(
+    (state: any) => state.setCurrentQuestion,
+  );
+
+  const resetMoodScore = usePolling((state: any) => state.resetMoodScore);
+
+  function moodAssessment() {
     if (moodScore < -2) {
-      return 'in a crisis';
+      return 'crisis';
     } else if (moodScore === -1) {
       return 'angry';
     } else if (moodScore === 0) {
       return 'worried';
     } else if (moodScore === 1) {
       return 'lethargic';
-    } else {
+    } else if (moodScore === 2) {
       return 'happy';
+    } else {
+      return 'romantic';
     }
   }
 
@@ -38,14 +48,39 @@ function MusicPlayer() {
         alignItems: 'center',
         gap: 40,
         padding: 10,
+        borderRadius: 20,
       }}
     >
       {completed ? (
         <Text style={styles.text}>
-          According to the polling, you should be {moodAssessment(moodScore)}!
+          According to our analysis, you should be feeling{' '}
+          {moodAssessment() !== 'crisis' ? moodAssessment() : 'in a crisis'}.
         </Text>
       ) : (
-        <Text style={styles.text}>How are you feeling?</Text>
+        <>
+          <Text style={styles.text}>How are you feeling?</Text>
+          <Link
+            onPress={() => {
+              resetMoodScore();
+              setCurrentQuestion(1);
+            }}
+            href="/polling"
+          >
+            <ThemedText
+              style={{
+                fontSize: 20,
+                padding: 16,
+                backgroundColor: 'black',
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: 'purple',
+              }}
+              type="subtitle"
+            >
+              User polling!
+            </ThemedText>
+          </Link>
+        </>
       )}
       {isTabletOrMobileDevice ? (
         <View
@@ -57,14 +92,7 @@ function MusicPlayer() {
             gap: 10,
           }}
         >
-          <View style={{ display: 'flex', gap: 10 }}>
-            <MusicMood mood="lethargic" />
-            <MusicMood mood="angry" />
-          </View>
-          <View style={{ display: 'flex', gap: 10 }}>
-            <MusicMood mood="worried" />
-            <MusicMood mood="crisis" />
-          </View>
+          {completed && <MusicList mood={moodAssessment()} />}
         </View>
       ) : (
         <View
@@ -74,16 +102,10 @@ function MusicPlayer() {
             justifyContent: 'center',
             alignItems: 'center',
             gap: 10,
+            width: '50%',
           }}
         >
-          <View style={{ display: 'flex', gap: 10 }}>
-            <MusicMood mood="lethargic" />
-            <MusicMood mood="angry" />
-          </View>
-          <View style={{ display: 'flex', gap: 10 }}>
-            <MusicMood mood="worried" />
-            <MusicMood mood="crisis" />
-          </View>
+          {completed && <MusicList mood={moodAssessment()} />}
         </View>
       )}
     </View>

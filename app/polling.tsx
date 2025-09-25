@@ -4,6 +4,8 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import Button from '@/components/Button';
 import { usePolling } from '@/store/usePolling';
+import '@expo/match-media';
+import { useMediaQuery } from 'react-responsive';
 
 interface Question {
   question: string;
@@ -46,6 +48,13 @@ export default function ModalScreen() {
   const increaseCurrentQuestion = usePolling(
     (state: any) => state.increaseCurrentQuestion,
   );
+  // const setCurrentQuestion = usePolling(
+  //   (state: any) => state.setCurrentQuestion,
+  // );
+
+  const isTabletOrMobileDevice = useMediaQuery({
+    maxDeviceWidth: 1224,
+  });
 
   return (
     <ThemedView style={styles.container}>
@@ -60,37 +69,66 @@ export default function ModalScreen() {
             gap: 40,
           }}
         >
-          {questions.map((q, index) => (
-            <>
-              {index + 1 === currentQuestion && (
-                <>
-                  <ThemedText>{currentQuestion}/3</ThemedText>
-                  <ThemedText style={styles.question}>{q.question}</ThemedText>
-                  <View style={styles.answers}>
-                    {q.answers.map((answer) => (
-                      <Button
-                        key={answer[0]}
-                        onPress={() => {
-                          setCompleted(false);
-                          if (currentQuestion === 3) {
-                            setCompleted(true);
-                          }
-                          setMoodScore(answer[1]);
-                          increaseCurrentQuestion();
-                        }}
-                        style={styles.answerBox}
-                        label={answer[0]}
-                      />
-                    ))}
-                  </View>
-                </>
-              )}
-            </>
-          ))}
-          {currentQuestion === 4 && (
+          {currentQuestion === 4 ? (
             <ThemedText style={styles.question}>
               You have completed the daily polling!
             </ThemedText>
+          ) : (
+            <View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 20,
+                }}
+              >
+                <ThemedText>{currentQuestion}/3</ThemedText>
+                <ThemedText style={styles.question}>
+                  {questions[currentQuestion - 1].question}
+                </ThemedText>
+                <>
+                  {isTabletOrMobileDevice ? (
+                    <View style={{ display: 'flex', flexDirection: 'column' }}>
+                      {questions[currentQuestion - 1].answers.map((answer) => (
+                        <Button
+                          key={answer[0]}
+                          onPress={() => {
+                            setCompleted(false);
+                            if (currentQuestion === 3) {
+                              setCompleted(true);
+                            }
+                            setMoodScore(answer[1]);
+                            increaseCurrentQuestion();
+                          }}
+                          style={styles.answerBox}
+                          label={answer[0]}
+                        />
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={styles.answers}>
+                      {questions[currentQuestion - 1].answers.map((answer) => (
+                        <Button
+                          key={answer[0]}
+                          onPress={() => {
+                            setCompleted(false);
+                            if (currentQuestion === 3) {
+                              setCompleted(true);
+                            }
+                            setMoodScore(answer[1]);
+                            increaseCurrentQuestion();
+                          }}
+                          style={styles.answerBox}
+                          label={answer[0]}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              </View>
+            </View>
           )}
         </View>
       </View>
@@ -108,6 +146,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     padding: 20,
+    backgroundColor: 'black',
   },
   link: {
     marginTop: 15,
