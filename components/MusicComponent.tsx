@@ -1,3 +1,4 @@
+import { usePlayer } from '@/store/usePlayer';
 import { useAudioPlayer } from 'expo-audio';
 import { Text, View } from 'react-native';
 
@@ -30,10 +31,12 @@ function MusicComponent({ mood, name }: { mood: string; name: string }) {
     },
     romantic: {
       'Only me': require('../assets/romantic/Only me.mp3'),
-      'Photos of Them': require('../assets/romantic/Photos Of Them.mp3'),
+      'Photos Of Them': require('../assets/romantic/Photos Of Them.mp3'),
       'Rain Rain Go Away': require('../assets/romantic/Rain Rain Go Away.mp3'),
     },
   };
+
+  const currentPlayer = usePlayer((state: any) => state.player);
   const player = useAudioPlayer(songDict[mood][name]);
   return (
     <View
