@@ -7,6 +7,7 @@ function Header() {
     (state: any) => state.setCurrentQuestion,
   );
   const resetMoodScore = usePolling((state: any) => state.resetMoodScore);
+  const setCompleted = usePolling((state: any) => state.setCompleted);
 
   return (
     <View style={styles.container}>
@@ -25,6 +26,7 @@ function Header() {
         onPress={() => {
           resetMoodScore();
           setCurrentQuestion(1);
+          setCompleted(false);
         }}
         href="/polling"
       >

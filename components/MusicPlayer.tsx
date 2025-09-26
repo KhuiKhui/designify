@@ -19,6 +19,7 @@ function MusicPlayer() {
   );
 
   const resetMoodScore = usePolling((state: any) => state.resetMoodScore);
+  const setCompleted = usePolling((state: any) => state.setCompleted);
 
   function moodAssessment() {
     if (moodScore < -2) {
@@ -40,6 +41,7 @@ function MusicPlayer() {
     <View
       style={{
         backgroundColor: 'rgba(0,0,0,0.5)',
+        boxShadow: '4px 4px',
         width: '70%',
         height: '60%',
         display: 'flex',
@@ -63,6 +65,7 @@ function MusicPlayer() {
             onPress={() => {
               resetMoodScore();
               setCurrentQuestion(1);
+              setCompleted(false);
             }}
             href="/polling"
           >
@@ -81,6 +84,11 @@ function MusicPlayer() {
             </ThemedText>
           </Link>
         </>
+      )}
+      {completed && (
+        <Text style={{ ...styles.text, fontSize: 20 }}>
+          We recommend listening to these tracks!
+        </Text>
       )}
       {isTabletOrMobileDevice ? (
         <View
